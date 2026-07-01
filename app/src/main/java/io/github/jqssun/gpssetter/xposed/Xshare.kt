@@ -45,6 +45,9 @@ class Xshare {
     val accuracy : String?
     get() = pref().getString("accuracy_level","10")
 
+    val altitude : String?
+    get() = pref().getString("altitude_value","0")
+
     val reload = pref().reload()
 
 }

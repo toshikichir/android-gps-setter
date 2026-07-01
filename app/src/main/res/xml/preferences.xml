@@ -58,6 +58,13 @@
             android:icon="@drawable/ic_accuracy"
             android:summary="10 m" />
 
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="altitude_value"
+            android:title="Altitude (m)"
+            android:icon="@drawable/ic_accuracy"
+            android:summary="0 m" />
+
         <SwitchPreferenceCompat
             android:title="@string/random_position"
             android:summary="@string/random_position_summary"

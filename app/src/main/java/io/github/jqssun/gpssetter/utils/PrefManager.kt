@@ -21,6 +21,7 @@ object PrefManager   {
     private const val HOOKED_SYSTEM = "system_hooked"
     private const val RANDOM_POSITION = "random_position"
     private const val ACCURACY_SETTING = "accuracy_level"
+    private const val ALTITUDE_SETTING = "altitude_value"
     private const val MAP_TYPE = "map_type"
     private const val DARK_THEME = "dark_theme"
     private const val DISABLE_UPDATE = "update_disabled"
@@ -65,6 +66,10 @@ object PrefManager   {
     var accuracy : String?
         get() = pref.getString(ACCURACY_SETTING,"10")
         set(value) { pref.edit().putString(ACCURACY_SETTING,value).apply()}
+
+    var altitude : String?
+        get() = pref.getString(ALTITUDE_SETTING, "0")
+        set(value) { pref.edit().putString(ALTITUDE_SETTING, value).apply() }
 
     var mapType : Int
         get() = pref.getInt(MAP_TYPE,1)
