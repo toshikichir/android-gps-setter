@@ -26,6 +26,7 @@ object LocationHook {
     var newlng: Double = 0.0000
     private const val pi = 3.14159265359
     private var accuracy: Float = 0.0f
+    private var altitude: Double = 0.0
     private val rand: Random = Random()
     private const val earth = 6378137.0
     private val settings = Xshare()
@@ -46,6 +47,7 @@ object LocationHook {
             newlng =
                 if (settings.isRandomPosition) settings.getLng + (dlng * 180.0 / pi) else settings.getLng
             accuracy = settings.accuracy!!.toFloat()
+            altitude = settings.altitude!!.toDouble()
 
         } catch (e: Exception) {
             Timber.tag("GPS Setter")
@@ -78,7 +80,7 @@ object LocationHook {
                             location.time = System.currentTimeMillis() - 300
                             location.latitude = newlat
                             location.longitude = newlng
-                            location.altitude = 0.0
+                            location.altitude = altitude
                             location.speed = 0F
                             location.accuracy = accuracy
                             location.speedAccuracyMetersPerSecond = 0F
@@ -130,7 +132,7 @@ object LocationHook {
 
                             location.latitude = newlat
                             location.longitude = newlng
-                            location.altitude = 0.0
+                            location.altitude = altitude
                             location.speed = 0F
                             location.speedAccuracyMetersPerSecond = 0F
                             XposedBridge.log("GS: lat: ${location.latitude}, lon: ${location.longitude}")
@@ -162,7 +164,7 @@ object LocationHook {
                                     location.time = System.currentTimeMillis() - 300
                                     location.latitude = newlat
                                     location.longitude = newlng
-                                    location.altitude = 0.0
+                                    location.altitude = altitude
                                     location.speed = 0F
                                     location.accuracy = accuracy
                                     location.speedAccuracyMetersPerSecond = 0F
@@ -211,7 +213,7 @@ object LocationHook {
 
                             location.latitude = newlat
                             location.longitude = newlng
-                            location.altitude = 0.0
+                            location.altitude = altitude
                             location.speed = 0F
                             location.speedAccuracyMetersPerSecond = 0F
                             XposedBridge.log("GS: lat: ${location.latitude}, lon: ${location.longitude}")
@@ -279,6 +281,23 @@ object LocationHook {
                             }
                         }
                     )
+                } else if (method.name == "getAltitude") {
+                    XposedBridge.hookMethod(method, object : XC_MethodHook() {
+                        override fun beforeHookedMethod(param: MethodHookParam) {
+                            if (System.currentTimeMillis() - mLastUpdated > interval) { updateLocation() }
+                            if (settings.isStarted && !ignorePkg.contains(lpparam.packageName)) {
+                                param.result = altitude
+                            }
+                        }
+                    })
+                } else if (method.name == "hasAltitude") {
+                    XposedBridge.hookMethod(method, object : XC_MethodHook() {
+                        override fun beforeHookedMethod(param: MethodHookParam) {
+                            if (settings.isStarted && !ignorePkg.contains(lpparam.packageName)) {
+                                param.result = true
+                            }
+                        }
+                    })
                 }
             }
 
@@ -311,7 +330,7 @@ object LocationHook {
 
                             location.latitude = newlat
                             location.longitude = newlng
-                            location.altitude = 0.0
+                            location.altitude = altitude
                             location.speed = 0F
                             location.speedAccuracyMetersPerSecond = 0F
                             XposedBridge.log("GS: lat: ${location.latitude}, lon: ${location.longitude}")
@@ -344,7 +363,7 @@ object LocationHook {
                             location.time = System.currentTimeMillis() - 300
                             location.latitude = newlat
                             location.longitude = newlng
-                            location.altitude = 0.0
+                            location.altitude = altitude
                             location.speed = 0F
                             location.speedAccuracyMetersPerSecond = 0F
                             XposedBridge.log("GS: lat: ${location.latitude}, lon: ${location.longitude}")

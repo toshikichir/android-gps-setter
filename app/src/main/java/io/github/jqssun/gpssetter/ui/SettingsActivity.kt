@@ -61,6 +61,7 @@ class ActivitySettings : AppCompatActivity() {
         override fun getString(key: String?, defValue: String?): String? {
             return when (key) {
                 "accuracy_level" -> PrefManager.accuracy
+                "altitude_value" -> PrefManager.altitude
                 "map_type" -> PrefManager.mapType.toString()
                 "dark_theme" -> PrefManager.darkTheme.toString()
                 else -> throw IllegalArgumentException("Invalid key $key")
@@ -70,6 +71,7 @@ class ActivitySettings : AppCompatActivity() {
         override fun putString(key: String?, value: String?) {
             return when (key) {
                 "accuracy_level" -> PrefManager.accuracy = value
+                "altitude_value" -> PrefManager.altitude = value
                 "map_type" -> PrefManager.mapType = value!!.toInt()
                 "dark_theme" -> PrefManager.darkTheme = value!!.toInt()
                 else -> throw IllegalArgumentException("Invalid key $key")
@@ -137,6 +139,19 @@ class ActivitySettings : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                    true
+                }
+            }
+
+            findPreference<EditTextPreference>("altitude_value")?.let {
+                it.summary = "${PrefManager.altitude} m"
+                it.setOnBindEditTextListener { editText ->
+                    editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+                    editText.keyListener = DigitsKeyListener.getInstance("0123456789.,-")
+                    editText.addTextChangedListener(getCommaReplacerTextWatcher(editText))
+                }
+                it.setOnPreferenceChangeListener { preference, newValue ->
+                    preference.summary = "$newValue m"
                     true
                 }
             }
